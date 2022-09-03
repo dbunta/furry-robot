@@ -10,7 +10,6 @@ int curlyCount, bracketCount, parenCount;
 
 int getInput();
 void checkSyntax(int len);
-int checkDoubleQuote(), isDoubleQuote(char c);
 void printSyntaxErrors();
 
 int main() {
@@ -36,13 +35,6 @@ void checkSyntax(int len) {
     for (i = 0; i < len; ++i) {
         c = line[i];
         c2 = line[i+1];
-        //in comment
-        //in double quote
-        //in single quote
-        //in curly
-        //in bracket
-        //in parentheses
-        //escape character
 
         if (c == '\n') {
             --inComment;
@@ -94,11 +86,17 @@ void checkSyntax(int len) {
             }
 
         } else if (inComment == 0 && inSingleQuote == 0 && inDoubleQuote == 1) {
-            if (c == '"') {
+            if ((c == '"' && c2 == '"') || (c == '\\' && c2 == '"')) {
+                //escape double quote
+            } else if (c == '"') {
+                //exiting double quote
                 inDoubleQuote = 0;
             }
         } else if (inComment == 0 && inSingleQuote == 1 && inDoubleQuote == 0) {
-            if (c == '\'') {
+            if ((c == '\'' && c2 == '\'') || (c == '\\' && c2 == '\'')) {
+                //escaping single quote
+            } else if (c == '\'') {
+                //exiting single quote
                 inSingleQuote = 0;
             }
         }
@@ -122,11 +120,4 @@ void printSyntaxErrors() {
     if (parenCount > 0) {
         printf("Missing closing parenthesis\n");
     }
-}
-
-int isDoubleQuote(char c) {
-    if (c == '"') { 
-        return 1;
-    }
-    return 0;
 }
